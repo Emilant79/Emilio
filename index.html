@@ -13,6 +13,7 @@
             margin: 0;
             background-color: #f0f0f0;
             font-family: Arial, sans-serif;
+            overflow: hidden;
         }
 
         #gameArea {
@@ -66,7 +67,7 @@
             jumpHeight = 0;
 
             jumpInterval = setInterval(() => {
-                if (jumpHeight < 120) { // Max Höhe
+                if (jumpHeight < 120) {
                     jumpHeight += 4;
                     dino.style.top = dino.offsetTop - 4 + "px";
                 }
@@ -121,6 +122,10 @@
 
         document.getElementById("gameArea").addEventListener("mousedown", startJump);
         document.getElementById("gameArea").addEventListener("mouseup", endJump);
+
+        // Für mobile Geräte
+        document.getElementById("gameArea").addEventListener("touchstart", startJump);
+        document.getElementById("gameArea").addEventListener("touchend", endJump);
 
         setInterval(createObstacle, 2000);
     </script>
