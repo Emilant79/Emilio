@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Einfaches Dino-Flappy-Spiel</title>
     <style>
+        /* Zentrale Ausrichtung des Spielfeldes und Basisgestaltung der Seite */
         body {
             display: flex;
             justify-content: center;
@@ -15,6 +16,7 @@
             overflow: hidden;
         }
 
+        /* Spielfeld: Vollbildgröße mit leichter Hintergrundfarbe */
         #gameArea {
             width: 100vw;
             height: 100vh;
@@ -23,9 +25,10 @@
             background-color: lightblue;
         }
 
+        /* Dino-Element, das der Spieler steuert */
         #dino {
-            width: 40px;
-            height: 40px;
+            width: 38px;
+            height: 38px;
             background-color: black;
             position: absolute;
             top: 50%;
@@ -33,11 +36,13 @@
             border-radius: 5px;
         }
 
+        /* Gestaltung der Hindernisse */
         .obstacle {
             position: absolute;
             animation: moveObstacle 3s linear infinite;
         }
 
+        /* Bewegung der Hindernisse von rechts nach links */
         @keyframes moveObstacle {
             from { right: -50px; }
             to { right: 100vw; }
@@ -50,35 +55,41 @@
     </div>
 
     <script>
-        const dino = document.getElementById("dino");
-        let velocity = 0;
-        let gravity = 0.3;
-        let score = 0;
+        const dino = document.getElementById("dino"); // Spielfigur
+        let velocity = -5; // Bewegungsgeschwindigkeit des Dinos
+        let gravity = 0.3; // Schwerkraft, die den Dino nach unten zieht
+        let score = 0; // Punktestand
 
+        // Funktion zum "Boosten" (Sprung nach oben)
         function boost() {
-            velocity = -6;
+            velocity = -6; // Setzt die Geschwindigkeit nach oben
         }
 
+        // Funktion, die den Dino-Standort im Spielfeld aktualisiert
         function updateDino() {
-            velocity += gravity;
+            velocity += gravity; // Erhöht die Geschwindigkeit durch Schwerkraft
             dino.style.top = dino.offsetTop + velocity + "px";
 
-            if (dino.offsetTop <= 0) {
+            // Grenzen des Spielfelds
+            if (dino.offsetTop <= 0) { // obere Begrenzung
                 dino.style.top = "0px";
                 velocity = 0;
-            } else if (dino.offsetTop + dino.offsetHeight >= gameArea.offsetHeight) {
+            } else if (dino.offsetTop + dino.offsetHeight >= gameArea.offsetHeight) { // untere Begrenzung
                 alert("Game Over! Score: " + score);
                 location.reload();
             }
         }
 
+        // Funktion, um Hindernisse zu erstellen
         function createObstacle() {
             const obstacleTop = document.createElement("div");
             const obstacleBottom = document.createElement("div");
 
-            let gapHeight = 250; 
+            // Definiert die Lücke zwischen oberen und unteren Hindernisblöcken
+            let gapHeight = 250; // Größere Lücke für leichteres Spielen
             let obstacleHeight = Math.floor(Math.random() * (gameArea.offsetHeight - gapHeight - 50)) + 50;
 
+            // Hindernis oben
             obstacleTop.classList.add("obstacle");
             obstacleTop.style.height = obstacleHeight + "px";
             obstacleTop.style.width = "50px";
@@ -86,6 +97,7 @@
             obstacleTop.style.top = "0px";
             obstacleTop.style.right = "0px";
 
+            // Hindernis unten
             obstacleBottom.classList.add("obstacle");
             obstacleBottom.style.height = (gameArea.offsetHeight - obstacleHeight - gapHeight) + "px";
             obstacleBottom.style.width = "50px";
@@ -96,13 +108,15 @@
             document.getElementById("gameArea").appendChild(obstacleTop);
             document.getElementById("gameArea").appendChild(obstacleBottom);
 
+            // Bewegung und Entfernung der Hindernisse
             let obstacleInterval = setInterval(() => {
-                if (obstacleTop.offsetLeft < -50) {
+                if (obstacleTop.offsetLeft < -50) { // Wenn das Hindernis aus dem Sichtfeld verschwindet
                     obstacleTop.remove();
                     obstacleBottom.remove();
                     clearInterval(obstacleInterval);
-                    score++;
+                    score++; // Punktestand erhöhen
                 } else if (
+                    // Kollisionserkennung
                     (dino.offsetTop < obstacleTop.offsetHeight && dino.offsetLeft + dino.offsetWidth > obstacleTop.offsetLeft) ||
                     (dino.offsetTop + dino.offsetHeight > gameArea.offsetHeight - obstacleBottom.offsetHeight &&
                      dino.offsetLeft + dino.offsetWidth > obstacleBottom.offsetLeft)
@@ -110,21 +124,24 @@
                     alert("Game Over! Score: " + score);
                     clearInterval(obstacleInterval);
                     location.reload();
-                } else {
+                } else { // Hindernisbewegung
                     obstacleTop.style.right = obstacleTop.offsetLeft - 5 + "px";
                     obstacleBottom.style.right = obstacleBottom.offsetLeft - 5 + "px";
                 }
             }, 20);
         }
 
+        // Zufällige Farbe für Hindernisse
         function getRandomColor() {
             const colors = ["red", "green", "blue", "purple", "orange"];
             return colors[Math.floor(Math.random() * colors.length)];
         }
 
+        // Ereignisse für "Boost" bei Klick oder Tipp
         document.addEventListener("mousedown", boost);
         document.addEventListener("touchstart", boost);
 
+        // Spiel-Updates
         setInterval(updateDino, 20);
         setInterval(createObstacle, 2000);
     </script>
