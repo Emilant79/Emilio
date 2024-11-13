@@ -35,6 +35,8 @@
 
         .obstacle {
             position: absolute;
+            width: 50px;
+            background-color: red;
             animation: moveObstacle 5s linear infinite;
         }
 
@@ -120,7 +122,7 @@
             const obstacleTop = document.createElement("div");
             const obstacleBottom = document.createElement("div");
 
-            let gapHeight = 300;  // Abstand zwischen Hindernissen
+            let gapHeight = 300;
             let obstacleHeight = Math.floor(Math.random() * (gameArea.offsetHeight - gapHeight - 100)) + 50;
 
             obstacleTop.classList.add("obstacle");
@@ -205,7 +207,7 @@
         document.addEventListener("touchend", stopBoost);
 
         setInterval(updateDino, 20);
-        setInterval(createObstacle, 4000); // Abstand zwischen Hindernissen auf 3.5 Sekunden erhöht
+        setInterval(createObstacle, 3500);
     </script>
 </body>
 </html>
