@@ -1,30 +1,3 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meine Webseite</title>
-    <style>
-        .custom-button {
-            background-color: black;
-            color: red;
-            padding: 10px 20px;
-            border: 2px solid red;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background-color 0.3s, color 0.3s;
-        }
 
-        .custom-button:hover {
-            background-color: red;
-            color: black;
-        }
-    </style>
-</head>
-<body>
-    <h1>Willkommen auf meiner Webseite!</h1>
-    <p>Hier ist ein roter Button mit schwarzem Hintergrund:</p>
-    <button class="custom-button">Klicken</button>
-</body>
-</html>
+
+
