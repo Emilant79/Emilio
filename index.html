@@ -3,28 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meine Webseite</title>
+    <title>Klickzähler</title>
     <style>
-        .custom-button {
+        body {
             background-color: black;
-            color: red;
-            padding: 10px 20px;
-            border: 2px solid red;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background-color 0.3s, color 0.3s;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
         }
 
-        .custom-button:hover {
-            background-color: red;
+        .button {
+            background-color: white;
             color: black;
+            border: none;
+            padding: 15px 30px;
+            font-size: 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-right: 20px;
+        }
+
+        .container {
+            display: flex;
+            align-items: center;
+        }
+
+        .counter {
+            font-size: 24px;
         }
     </style>
 </head>
 <body>
-    <h1>Willkommen auf meiner Webseite!</h1>
-    <p>Hier ist ein roter Button mit schwarzem Hintergrund:</p>
-    <button class="custom-button">Klicken</button>
+    <div class="container">
+        <button class="button" onclick="incrementCounter()">Klick mich</button>
+        <div class="counter" id="counter">0</div>
+    </div>
+
+    <script>
+        let count = 0;
+
+        function incrementCounter() {
+            count++;
+            document.getElementById("counter").innerText = count;
+        }
+    </script>
 </body>
 </html>
