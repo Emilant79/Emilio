@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dino-Spiel</title>
+    <title>Dino-Flappy</title>
     <style>
         body {
             display: flex;
@@ -11,17 +11,16 @@
             align-items: center;
             height: 100vh;
             margin: 0;
-            background-color: #f0f0f0;
+            background-color: #87CEEB;
             font-family: Arial, sans-serif;
             overflow: hidden;
         }
 
         #gameArea {
-            width: 800px;
-            height: 200px;
+            width: 100vw;
+            height: 100vh;
             position: relative;
             overflow: hidden;
-            border: 2px solid black;
             background-color: lightblue;
         }
 
@@ -30,21 +29,19 @@
             height: 40px;
             background-color: black;
             position: absolute;
-            bottom: 0;
-            left: 50px;
+            top: 50%;
+            left: 10%;
             border-radius: 5px;
         }
 
         .obstacle {
             position: absolute;
-            bottom: 0;
-            right: 0;
-            animation: moveObstacle 2s linear infinite;
+            animation: moveObstacle 3s linear infinite;
         }
 
         @keyframes moveObstacle {
-            from { right: 0; }
-            to { right: 800px; }
+            from { right: -50px; }
+            to { right: 100vw; }
         }
     </style>
 </head>
@@ -55,78 +52,84 @@
 
     <script>
         const dino = document.getElementById("dino");
-        let isJumping = false;
-        let jumpHeight = 0;
-        let jumpInterval;
-        let downInterval;
+        let isBoosting = false;
+        let velocity = 0;
+        let gravity = 0.3;
         let score = 0;
 
-        function startJump() {
-            if (isJumping) return;
-            isJumping = true;
-            jumpHeight = 0;
-
-            jumpInterval = setInterval(() => {
-                if (jumpHeight < 120) {
-                    jumpHeight += 4;
-                    dino.style.top = dino.offsetTop - 4 + "px";
-                }
-            }, 20);
+        function boost() {
+            velocity = -6; // Boost nach oben
         }
 
-        function endJump() {
-            clearInterval(jumpInterval);
-            downInterval = setInterval(() => {
-                if (dino.offsetTop >= 160) {
-                    clearInterval(downInterval);
-                    isJumping = false;
-                } else {
-                    dino.style.top = dino.offsetTop + 5 + "px";
-                }
-            }, 20);
+        function updateDino() {
+            velocity += gravity;
+            dino.style.top = dino.offsetTop + velocity + "px";
+
+            // Randkollision
+            if (dino.offsetTop <= 0) {
+                dino.style.top = "0px";
+                velocity = 0;
+            } else if (dino.offsetTop + dino.offsetHeight >= gameArea.offsetHeight) {
+                alert("Game Over! Score: " + score);
+                location.reload();
+            }
         }
 
         function createObstacle() {
-            const obstacle = document.createElement("div");
-            obstacle.classList.add("obstacle");
+            const obstacleTop = document.createElement("div");
+            const obstacleBottom = document.createElement("div");
 
-            const obstacleHeight = Math.floor(Math.random() * 50) + 20;
-            const obstacleWidth = Math.floor(Math.random() * 20) + 20;
-            obstacle.style.height = obstacleHeight + "px";
-            obstacle.style.width = obstacleWidth + "px";
+            let gapHeight = 150;
+            let obstacleHeight = Math.floor(Math.random() * (gameArea.offsetHeight - gapHeight));
 
-            const colors = ["red", "green", "blue", "purple", "orange"];
-            obstacle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            obstacleTop.classList.add("obstacle");
+            obstacleTop.style.height = obstacleHeight + "px";
+            obstacleTop.style.width = "50px";
+            obstacleTop.style.backgroundColor = getRandomColor();
+            obstacleTop.style.top = "0px";
+            obstacleTop.style.right = "0px";
 
-            document.getElementById("gameArea").appendChild(obstacle);
+            obstacleBottom.classList.add("obstacle");
+            obstacleBottom.style.height = (gameArea.offsetHeight - obstacleHeight - gapHeight) + "px";
+            obstacleBottom.style.width = "50px";
+            obstacleBottom.style.backgroundColor = getRandomColor();
+            obstacleBottom.style.bottom = "0px";
+            obstacleBottom.style.right = "0px";
+
+            document.getElementById("gameArea").appendChild(obstacleTop);
+            document.getElementById("gameArea").appendChild(obstacleBottom);
 
             let obstacleInterval = setInterval(() => {
-                if (obstacle.offsetLeft < 0) {
-                    obstacle.remove();
+                if (obstacleTop.offsetLeft < -50) {
+                    obstacleTop.remove();
+                    obstacleBottom.remove();
                     clearInterval(obstacleInterval);
                     score++;
                     console.log("Score:", score);
                 } else if (
-                    obstacle.offsetLeft < dino.offsetLeft + dino.offsetWidth &&
-                    obstacle.offsetLeft + obstacle.offsetWidth > dino.offsetLeft &&
-                    dino.offsetTop + dino.offsetHeight >= obstacle.offsetTop
+                    (dino.offsetTop < obstacleTop.offsetHeight && dino.offsetLeft + dino.offsetWidth > obstacleTop.offsetLeft) ||
+                    (dino.offsetTop + dino.offsetHeight > gameArea.offsetHeight - obstacleBottom.offsetHeight &&
+                     dino.offsetLeft + dino.offsetWidth > obstacleBottom.offsetLeft)
                 ) {
                     alert("Game Over! Score: " + score);
                     clearInterval(obstacleInterval);
                     location.reload();
                 } else {
-                    obstacle.style.left = obstacle.offsetLeft - 5 + "px";
+                    obstacleTop.style.right = obstacleTop.offsetLeft - 5 + "px";
+                    obstacleBottom.style.right = obstacleBottom.offsetLeft - 5 + "px";
                 }
             }, 20);
         }
 
-        document.getElementById("gameArea").addEventListener("mousedown", startJump);
-        document.getElementById("gameArea").addEventListener("mouseup", endJump);
+        function getRandomColor() {
+            const colors = ["red", "green", "blue", "purple", "orange"];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
 
-        // Für mobile Geräte
-        document.getElementById("gameArea").addEventListener("touchstart", startJump);
-        document.getElementById("gameArea").addEventListener("touchend", endJump);
+        document.addEventListener("mousedown", boost);
+        document.addEventListener("touchstart", boost);
 
+        setInterval(updateDino, 20);
         setInterval(createObstacle, 2000);
     </script>
 </body>
