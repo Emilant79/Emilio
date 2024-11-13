@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dino-Flappy</title>
+    <title>Einfaches Dino-Flappy-Spiel</title>
     <style>
         body {
             display: flex;
@@ -12,7 +12,6 @@
             height: 100vh;
             margin: 0;
             background-color: #87CEEB;
-            font-family: Arial, sans-serif;
             overflow: hidden;
         }
 
@@ -52,20 +51,18 @@
 
     <script>
         const dino = document.getElementById("dino");
-        let isBoosting = false;
         let velocity = 0;
         let gravity = 0.3;
         let score = 0;
 
         function boost() {
-            velocity = -6; // Boost nach oben
+            velocity = -6;
         }
 
         function updateDino() {
             velocity += gravity;
             dino.style.top = dino.offsetTop + velocity + "px";
 
-            // Randkollision
             if (dino.offsetTop <= 0) {
                 dino.style.top = "0px";
                 velocity = 0;
@@ -79,8 +76,8 @@
             const obstacleTop = document.createElement("div");
             const obstacleBottom = document.createElement("div");
 
-            let gapHeight = 150;
-            let obstacleHeight = Math.floor(Math.random() * (gameArea.offsetHeight - gapHeight));
+            let gapHeight = 250; 
+            let obstacleHeight = Math.floor(Math.random() * (gameArea.offsetHeight - gapHeight - 50)) + 50;
 
             obstacleTop.classList.add("obstacle");
             obstacleTop.style.height = obstacleHeight + "px";
@@ -105,7 +102,6 @@
                     obstacleBottom.remove();
                     clearInterval(obstacleInterval);
                     score++;
-                    console.log("Score:", score);
                 } else if (
                     (dino.offsetTop < obstacleTop.offsetHeight && dino.offsetLeft + dino.offsetWidth > obstacleTop.offsetLeft) ||
                     (dino.offsetTop + dino.offsetHeight > gameArea.offsetHeight - obstacleBottom.offsetHeight &&
