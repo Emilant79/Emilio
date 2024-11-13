@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Einfaches Dino-Flappy-Spiel</title>
+    <title>Dino Flappy Spiel</title>
     <style>
         body {
             display: flex;
@@ -35,7 +35,7 @@
 
         .obstacle {
             position: absolute;
-            animation: moveObstacle 3s linear infinite;
+            animation: moveObstacle 4s linear infinite;
         }
 
         @keyframes moveObstacle {
@@ -43,7 +43,6 @@
             to { right: 100vw; }
         }
 
-        /* Stil für den Restart-Button */
         #restartButton {
             display: none;
             position: absolute;
@@ -59,7 +58,6 @@
             cursor: pointer;
         }
 
-        /* Stil für die Punktanzeige */
         #scoreDisplay {
             display: none;
             position: absolute;
@@ -84,18 +82,28 @@
         const scoreDisplay = document.getElementById("scoreDisplay");
         const gameArea = document.getElementById("gameArea");
         let velocity = 0;
-        let gravity = 0.3;
+        let gravity = 0.2;
+        let isBoosting = false;
         let score = 0;
         let gameRunning = true;
 
         function boost() {
-            if (gameRunning) velocity = -6;
+            isBoosting = true;
+        }
+
+        function stopBoost() {
+            isBoosting = false;
         }
 
         function updateDino() {
             if (!gameRunning) return;
 
-            velocity += gravity;
+            if (isBoosting) {
+                velocity = -4; // Je länger gedrückt wird, desto langsamer steigt der Dino nach oben
+            } else {
+                velocity += gravity; // Wenn nicht gedrückt, fällt der Dino langsamer
+            }
+
             dino.style.top = dino.offsetTop + velocity + "px";
 
             if (dino.offsetTop <= 0) {
@@ -112,7 +120,7 @@
             const obstacleTop = document.createElement("div");
             const obstacleBottom = document.createElement("div");
 
-            let gapHeight = 250;
+            let gapHeight = 300;  // Größerer Abstand zwischen den Balken
             let obstacleHeight = Math.floor(Math.random() * (gameArea.offsetHeight - gapHeight - 50)) + 50;
 
             obstacleTop.classList.add("obstacle");
@@ -163,7 +171,7 @@
             const dinoRect = dino.getBoundingClientRect();
             const obstacleRect = obstacle.getBoundingClientRect();
 
-            const buffer = 10;
+            const buffer = 10; // Kleiner Puffer für die Kollisionsbox
 
             return !(
                 dinoRect.right < obstacleRect.left + buffer ||
@@ -175,7 +183,7 @@
 
         function endGame() {
             gameRunning = false;
-            gameArea.style.backgroundColor = "#ADD8E6"; // Hintergrund auf hellblau setzen
+            gameArea.style.backgroundColor = "#ADD8E6";
             scoreDisplay.innerText = "Punkte: " + score;
             scoreDisplay.style.display = "block";
             restartButton.style.display = "block";
@@ -187,15 +195,17 @@
             score = 0;
             scoreDisplay.style.display = "none";
             restartButton.style.display = "none";
-            gameArea.style.backgroundColor = "lightblue"; // Hintergrund zurücksetzen
+            gameArea.style.backgroundColor = "lightblue";
             dino.style.top = "50%";
         }
 
         document.addEventListener("mousedown", boost);
-        document.addEventListener("touchstart", boost);
+        document.addEventListener("mouseup", stopBoost);
+        document.addEventListener("touchstart", boost); // Für mobiles Drücken
+        document.addEventListener("touchend", stopBoost); // Für mobiles Loslassen
 
         setInterval(updateDino, 20);
-        setInterval(createObstacle, 2000);
+        setInterval(createObstacle, 3000); // Vergrößerter Abstand zwischen den Hindernissen
     </script>
 </body>
 </html>
