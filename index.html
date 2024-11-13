@@ -55,24 +55,32 @@
     <script>
         const dino = document.getElementById("dino");
         let isJumping = false;
+        let jumpHeight = 0;
+        let jumpInterval;
+        let downInterval;
         let score = 0;
 
-        function jump() {
+        function startJump() {
             if (isJumping) return;
             isJumping = true;
-            let upInterval = setInterval(() => {
-                if (dino.offsetTop <= 80) {
-                    clearInterval(upInterval);
-                    let downInterval = setInterval(() => {
-                        if (dino.offsetTop >= 160) {
-                            clearInterval(downInterval);
-                            isJumping = false;
-                        } else {
-                            dino.style.top = dino.offsetTop + 5 + "px";
-                        }
-                    }, 20);
+            jumpHeight = 0;
+
+            jumpInterval = setInterval(() => {
+                if (jumpHeight < 120) { // Max Höhe
+                    jumpHeight += 4;
+                    dino.style.top = dino.offsetTop - 4 + "px";
+                }
+            }, 20);
+        }
+
+        function endJump() {
+            clearInterval(jumpInterval);
+            downInterval = setInterval(() => {
+                if (dino.offsetTop >= 160) {
+                    clearInterval(downInterval);
+                    isJumping = false;
                 } else {
-                    dino.style.top = dino.offsetTop - 5 + "px";
+                    dino.style.top = dino.offsetTop + 5 + "px";
                 }
             }, 20);
         }
@@ -86,7 +94,7 @@
             obstacle.style.height = obstacleHeight + "px";
             obstacle.style.width = obstacleWidth + "px";
 
-            const colors = ["red", "green", "blue", "purple", "orange","yellow"];
+            const colors = ["red", "green", "blue", "purple", "orange"];
             obstacle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
 
             document.getElementById("gameArea").appendChild(obstacle);
@@ -111,7 +119,8 @@
             }, 20);
         }
 
-        document.getElementById("gameArea").addEventListener("click", jump);
+        document.getElementById("gameArea").addEventListener("mousedown", startJump);
+        document.getElementById("gameArea").addEventListener("mouseup", endJump);
 
         setInterval(createObstacle, 2000);
     </script>
