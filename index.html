@@ -86,13 +86,13 @@
             const obstacleBottom = document.createElement("div");
 
             // Definiert die Lücke zwischen oberen und unteren Hindernisblöcken
-            let gapHeight = 250; // Größere Lücke für leichteres Spielen
+            let gapHeight = 300; // Größere Lücke für leichteres Spielen
             let obstacleHeight = Math.floor(Math.random() * (gameArea.offsetHeight - gapHeight - 50)) + 50;
 
             // Hindernis oben
             obstacleTop.classList.add("obstacle");
             obstacleTop.style.height = obstacleHeight + "px";
-            obstacleTop.style.width = "50px";
+            obstacleTop.style.width = "25px";
             obstacleTop.style.backgroundColor = getRandomColor();
             obstacleTop.style.top = "0px";
             obstacleTop.style.right = "0px";
@@ -133,7 +133,7 @@
 
         // Zufällige Farbe für Hindernisse
         function getRandomColor() {
-            const colors = ["red", "green", "blue", "purple", "orange","dark.blue"];
+            const colors = ["red", "green", "blue", "purple", "orange"];
             return colors[Math.floor(Math.random() * colors.length)];
         }
 
