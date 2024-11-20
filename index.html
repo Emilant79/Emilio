@@ -3,211 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dino Flappy Spiel</title>
+    <title>Code-Editor</title>
     <style>
         body {
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
+            justify-content: center;
             height: 100vh;
             margin: 0;
-            background-color: #87CEEB;
-            overflow: hidden;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
         }
-
-        #gameArea {
-            width: 100vw;
-            height: 100vh;
-            position: relative;
-            overflow: hidden;
-            background-color: black;
-        }
-
-        #dino {
-            width: 40px;
-            height: 40px;
-            background-color: black;
-            position: absolute;
-            top: 50%;
-            left: 10%;
+        textarea {
+            width: 80%;
+            height: 200px;
+            margin-bottom: 20px;
+            padding: 10px;
+            font-size: 16px;
+            font-family: monospace;
+            border: 1px solid #ccc;
             border-radius: 5px;
+            background-color: #fff;
         }
-
-        .obstacle {
-            position: absolute;
-            width: 50px;
-            background-color: red;
-            animation: moveObstacle 5s linear infinite;
-        }
-
-        @keyframes moveObstacle {
-            from { right: -50px; }
-            to { right: 100vw; }
-        }
-
-        #restartButton {
-            display: none;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+        button {
             padding: 10px 20px;
-            font-size: 24px;
+            font-size: 16px;
             color: white;
-            background-color: red;
+            background-color: #007bff;
             border: none;
             border-radius: 5px;
             cursor: pointer;
         }
-
-        #scoreDisplay {
-            display: none;
-            position: absolute;
-            top: 40%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 24px;
-            color: white;
+        button:hover {
+            background-color: #0056b3;
+        }
+        #output {
+            margin-top: 20px;
+            padding: 10px;
+            width: 80%;
+            text-align: center;
+            font-size: 16px;
+            color: green;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #e8ffe8;
         }
     </style>
 </head>
 <body>
-    <div id="gameArea">
-        <div id="dino"></div>
-        <div id="scoreDisplay">Punkte: 0</div>
-        <button id="restartButton" onclick="restartGame()">RESTART</button>
-    </div>
+    <h1>Code-Editor</h1>
+    <textarea id="codeInput" placeholder="Schreibe hier deinen Code..."></textarea>
+    <button onclick="executeCode()">Ausführen</button>
+    <div id="output">Ergebnis wird hier angezeigt...</div>
 
     <script>
-        const dino = document.getElementById("dino");
-        const restartButton = document.getElementById("restartButton");
-        const scoreDisplay = document.getElementById("scoreDisplay");
-        const gameArea = document.getElementById("gameArea");
-        let velocity = 0;
-        let gravity = 0.2;
-        let isBoosting = false;
-        let score = 0;
-        let gameRunning = true;
+        function executeCode() {
+            const code = document.getElementById("codeInput").value;
+            const output = document.getElementById("output");
 
-        function boost() {
-            isBoosting = true;
-        }
-
-        function stopBoost() {
-            isBoosting = false;
-        }
-
-        function updateDino() {
-            if (!gameRunning) return;
-
-            if (isBoosting) {
-                velocity = -4;
-            } else {
-                velocity += gravity;
-            }
-
-            dino.style.top = dino.offsetTop + velocity + "px";
-
-            if (dino.offsetTop <= 0) {
-                dino.style.top = "0px";
-                velocity = 0;
-            } else if (dino.offsetTop + dino.offsetHeight >= gameArea.offsetHeight) {
-                endGame();
-            }
-        }
-
-        function createObstacle() {
-            if (!gameRunning) return;
-
-            const obstacleTop = document.createElement("div");
-            const obstacleBottom = document.createElement("div");
-
-            let gapHeight = 385;
-            let obstacleHeight = Math.floor(Math.random() * (gameArea.offsetHeight - gapHeight - 100)) + 50;
-
-            obstacleTop.classList.add("obstacle");
-            obstacleTop.style.height = obstacleHeight + "px";
-            obstacleTop.style.width = "50px";
-            obstacleTop.style.backgroundColor = getRandomColor();
-            obstacleTop.style.top = "0px";
-            obstacleTop.style.right = "0px";
-
-            obstacleBottom.classList.add("obstacle");
-            obstacleBottom.style.height = (gameArea.offsetHeight - obstacleHeight - gapHeight) + "px";
-            obstacleBottom.style.width = "50px";
-            obstacleBottom.style.backgroundColor = getRandomColor();
-            obstacleBottom.style.bottom = "0px";
-            obstacleBottom.style.right = "0px";
-
-            document.getElementById("gameArea").appendChild(obstacleTop);
-            document.getElementById("gameArea").appendChild(obstacleBottom);
-
-            let obstacleInterval = setInterval(() => {
-                if (!gameRunning) {
-                    obstacleTop.remove();
-                    obstacleBottom.remove();
-                    clearInterval(obstacleInterval);
-                    return;
-                }
-
-                if (obstacleTop.offsetLeft < -50) {
-                    obstacleTop.remove();
-                    obstacleBottom.remove();
-                    clearInterval(obstacleInterval);
-                    score++;
-                } else if (checkCollision(obstacleTop) || checkCollision(obstacleBottom)) {
-                    endGame();
+            try {
+                if (code === "zeige text") {
+                    output.innerText = "Geheimtext: Hallo, du hast den Code gefunden!";
+                } else if (code === "zeige zahlen") {
+                    output.innerText = "Geheime Zahl: 42!";
                 } else {
-                    obstacleTop.style.right = obstacleTop.offsetLeft - 5 + "px";
-                    obstacleBottom.style.right = obstacleBottom.offsetLeft - 5 + "px";
+                    output.innerText = "Kein gültiger Code eingegeben.";
                 }
-            }, 20);
+            } catch (error) {
+                output.innerText = "Fehler: " + error.message;
+            }
         }
-
-        function getRandomColor() {
-            const colors = ["red", "green", "blue", "purple", "orange"];
-            return colors[Math.floor(Math.random() * colors.length)];
-        }
-
-        function checkCollision(obstacle) {
-            const dinoRect = dino.getBoundingClientRect();
-            const obstacleRect = obstacle.getBoundingClientRect();
-
-            const buffer = 10;
-
-            return !(
-                dinoRect.right < obstacleRect.left + buffer ||
-                dinoRect.left > obstacleRect.right - buffer ||
-                dinoRect.bottom < obstacleRect.top + buffer ||
-                dinoRect.top > obstacleRect.bottom - buffer
-            );
-        }
-
-        function endGame() {
-            gameRunning = false;
-            gameArea.style.backgroundColor = "#ADD8E6";
-            scoreDisplay.innerText = "Punkte: " + score;
-            scoreDisplay.style.display = "block";
-            restartButton.style.display = "block";
-        }
-
-        function restartGame() {
-            gameRunning = true;
-            velocity = 0;
-            score = 0;
-            scoreDisplay.style.display = "none";
-            restartButton.style.display = "none";
-            gameArea.style.backgroundColor = "lightblue";
-            dino.style.top = "50%";
-        }
-
-        document.addEventListener("mousedown", boost);
-        document.addEventListener("mouseup", stopBoost);
-        document.addEventListener("touchstart", boost);
-        document.addEventListener("touchend", stopBoost);
-
-        setInterval(updateDino, 20);
-        setInterval(createObstacle, 4500);
     </script>
 </body>
 </html>
